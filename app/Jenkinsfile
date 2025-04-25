@@ -17,7 +17,7 @@ pipeline {
             steps {
                 script {
                     // Build the Docker image with the dynamic tag
-                    sh "docker build -t ${DOCKER_IMAGE} ."
+                    bat "docker build -t ${DOCKER_IMAGE} ."
                 }
             }
         }
@@ -27,8 +27,8 @@ pipeline {
                 script {
                     // Login to Docker Hub and push the image
                     withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                        sh "echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin"
-                        sh "docker push ${DOCKER_IMAGE}"
+                        bat "echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin"
+                        bat "docker push ${DOCKER_IMAGE}"
                     }
                 }
             }
@@ -38,13 +38,13 @@ pipeline {
             steps {
                 script {
                     // Replace the placeholder in the deployment.yaml with the dynamic image name
-                    sh "sed 's|{{IMAGE_NAME}}|${DOCKER_IMAGE}|g' k8s/deployment.yaml > k8s/deployment-temp.yaml"
+                    bat "sed 's|{{IMAGE_NAME}}|${DOCKER_IMAGE}|g' k8s/deployment.yaml > k8s/deployment-temp.yaml"
                     
                     // Deploy to Kubernetes using the modified deployment file
-                    sh 'kubectl apply -f k8s/deployment-temp.yaml'
+                    bat 'kubectl apply -f k8s/deployment-temp.yaml'
 
                     // Clean up the temporary file after deployment
-                    sh 'rm k8s/deployment-temp.yaml'
+                    bat 'rm k8s/deployment-temp.yaml'
                 }
             }
         }
