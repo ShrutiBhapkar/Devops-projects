@@ -1,6 +1,7 @@
 pipeline {
-    agent any
-
+    agent {
+        label 'windows'
+    }
     environment {
         DOCKER_IMAGE = "My-flask-app:${BUILD_TAG}"  // Dynamic image name using build tag or branch
     }
