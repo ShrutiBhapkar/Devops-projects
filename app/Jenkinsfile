@@ -9,8 +9,7 @@ pipeline {
         stage('Clone Repository') {
             steps {
                 
-                git ls-remote https://github.com/ShrutiBhapkar/Devops-projects.git
-                git 'https://github.com/ShrutiBhapkar/Devops-projects.git'
+                sh 'git clone -b main https://github.com/ShrutiBhapkar/Devops-projects.git'
             }
         }
         
