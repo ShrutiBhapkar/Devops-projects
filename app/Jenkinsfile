@@ -1,26 +1,36 @@
 pipeline {
     agent any
-    
+
     environment {
-        // Set up environment variables
-        DOCKER_IMAGE = "my-app"
-        KUBERNETES_NAMESPACE = "k8s-app"
-        K8S_DEPLOYMENT_NAME = "k8s-deployment"
+        DOCKER_IMAGE = 'My-flask-app' // Change this to your Docker image name
+        DOCKER_TAG = 'latest'
+        REGISTRY_CREDENTIALS = 'dockerhub-credentials' // Change this to your Docker registry credentials ID in Jenkins
     }
 
     stages {
         stage('Clone Repository') {
             steps {
-                // Clone the repository
-                git 'https://github.com/ShrutiBhapkar/Devops-projects.git'
+                // Clone your Git repository
+                git 'https://github.com/ShrutiBhapkar/Devops-project.git'  // Replace with your Git repository URL
             }
         }
 
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Build the Docker image
-                    sh 'docker build -t $DOCKER_IMAGE .'
+                    // Build the Docker image using the Dockerfile
+                    sh 'docker build -t $DOCKER_IMAGE:$DOCKER_TAG .'
+                }
+            }
+        }
+
+        stage('Login to Docker Hub') {
+            steps {
+                script {
+                    // Log in to Docker Hub using Jenkins credentials
+                      withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        sh 'echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin'
+                    }
                 }
             }
         }
@@ -28,11 +38,8 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
-                    // Log into Docker Hub (or another registry) and push the image
-                    withCredentials([usernamePassword(credentialsId: 'docker-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                        sh "echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin"
-                        sh "docker push $DOCKER_IMAGE"
-                    }
+                    // Push the Docker image to Docker Hub
+                    sh 'docker push $DOCKER_IMAGE:$DOCKER_TAG'
                 }
             }
         }
@@ -40,23 +47,20 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 script {
-                    // Deploy to Kubernetes
-                    sh """
-                    kubectl set image deployment/$K8S_DEPLOYMENT_NAME $K8S_DEPLOYMENT_NAME=$DOCKER_IMAGE --namespace=$KUBERNETES_NAMESPACE
-                    kubectl rollout status deployment/$K8S_DEPLOYMENT_NAME --namespace=$KUBERNETES_NAMESPACE
-                    """
+                    // Deploy the app to Kubernetes using kubectl
+                    // First, ensure kubectl is configured to use your local Kubernetes cluster (docker-desktop)
+                    sh 'kubectl apply -f k8s/deployment.yaml' // You can define your Kubernetes resources in a deployment.yaml file
                 }
             }
         }
     }
-    
+
     post {
         success {
-            echo "Deployment successfully completed!"
+            echo 'Deployment successful!'
         }
         failure {
-            echo "Deployment failed!"
+            echo 'Deployment failed!'
         }
     }
 }
-
