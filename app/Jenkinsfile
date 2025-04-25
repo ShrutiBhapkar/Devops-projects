@@ -3,16 +3,16 @@ pipeline {
     
     environment {
         // Set up environment variables
-        DOCKER_IMAGE = "your-docker-repo/your-app-name"
-        KUBERNETES_NAMESPACE = "your-k8s-namespace"
-        K8S_DEPLOYMENT_NAME = "your-k8s-deployment"
+        DOCKER_IMAGE = "my-app"
+        KUBERNETES_NAMESPACE = "k8s-app"
+        K8S_DEPLOYMENT_NAME = "k8s-deployment"
     }
 
     stages {
         stage('Clone Repository') {
             steps {
                 // Clone the repository
-                git 'https://github.com/your-username/your-repo.git'
+                git 'https://github.com/ShrutiBhapkar/Devops-projects.git'
             }
         }
 
