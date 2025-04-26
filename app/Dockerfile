@@ -1,7 +1,6 @@
 # Use Python 3.10 with Alpine as the base image for building
   FROM python:3.10-slim-buster
-  RUN apt-get update && apt-get install -y git
-    
+
 WORKDIR /app
 
 COPY requirements.txt /app
