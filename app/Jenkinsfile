@@ -43,28 +43,39 @@ pipeline {
          stage('Deploy to Kubernetes') {
              steps {
                 script {
-    // Set Docker image to "latest"
-    env.DOCKER_IMAGE = "shru940/my-flask-app:latest"
-    
-    // Debug to ensure the substitution happens
-    echo "DOCKER_IMAGE = ${env.DOCKER_IMAGE}"  // Should print something like st/my-flask-app:latest
+    // Base Docker image name (without the tag)
+    env.DOCKER_IMAGE = "my-flask-app"
 
-    // Read and update the YAML with the correct Docker image
-    def updatedYaml = readFile('app/K8s/deployment.yaml')
-                          .replace('{{IMAGE_NAME}}', env.DOCKER_IMAGE)
+    // Get the system name using uname (this will give you "Linux", "Darwin", etc.)
+    def unameValue = "shru940"
+
+    // Define the tag as 'latest'
+                     
+    def tag = "latest"  // You want this to always be 'latest'
+
+    // Combine uname (system name), base image, and the 'latest' tag into the full Docker image tag
+    def fullImage = "${unameValue}:${env.DOCKER_IMAGE}:${tag}"  // Example: "Linux:my-flask-app:latest"
+
+    // Debugging: Verify the full Docker image path
+    echo "Full Docker Image: ${fullImage}"  // Should print something like "Linux:my-flask-app:latest"
     
-    // Print the updated YAML to verify the changes
+    // Read the YAML file and replace the placeholder with the full image tag
+    def updatedYaml = readFile('app/K8s/deployment.yaml')
+                          .replace('{{IMAGE_NAME}}', fullImage)
+    
+    // Debugging: Print the updated YAML to verify the change
     echo "Updated YAML:\n${updatedYaml}"
     
     // Write the updated YAML to a temporary file
     writeFile file: 'app/K8s/deployment-temp.yaml', text: updatedYaml
     
-    // Apply the updated YAML file to the Kubernetes cluster
+    // Apply the updated YAML file to Kubernetes
     bat 'kubectl apply -f app\\K8s\\deployment-temp.yaml'
     
-    // Delete the temporary file
+    // Optionally delete the temporary file after applying
     bat 'del app\\K8s\\deployment-temp.yaml'
 }
+
              }
          }
      }
