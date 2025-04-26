@@ -1,6 +1,5 @@
 # Use Python 3.10 with Alpine as the base image for building
-  FROM python:3.10-slim-buster
-
+FROM python:3.10
 WORKDIR /app
 
 COPY requirements.txt /app
