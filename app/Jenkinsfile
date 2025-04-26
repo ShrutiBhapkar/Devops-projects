@@ -22,8 +22,8 @@ pipeline {
              steps {
                  withCredentials([usernamePassword(credentialsId: 'docker-hub-credens', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                       bat """
-                        echo Logging into Docker...
-                        echo|set /p=%DOCKER_PASSWORD% | docker login --username %DOCKER_USERNAME% --password-stdin
+                       echo Logging into Docker Hub...
+                        docker login --username %DOCKER_USERNAME% --password %DOCKER_PASSWORD%
                         if %ERRORLEVEL% NEQ 0 (
                             echo Docker login failed!
                             exit /b 1
