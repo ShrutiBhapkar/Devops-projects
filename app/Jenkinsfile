@@ -43,12 +43,12 @@ pipeline {
          stage('Deploy to Kubernetes') {
              steps {
                  script {
-                     writeFile file: 'k8s\\deployment-temp.yaml',
-                         text: readFile('k8s\\deployment.yaml').replace('{{IMAGE_NAME}}', env.DOCKER_IMAGE)
+                     writeFile file: 'K8s\\deployment-temp.yaml',
+                         text: readFile('K8s\\deployment.yaml').replace('{{IMAGE_NAME}}', env.DOCKER_IMAGE)
  
                      bat 'kubectl apply -f k8s\\deployment-temp.yaml'
  
-                     bat 'del k8s\\deployment-temp.yaml'  // delete in Windows
+                     bat 'del K8s\\deployment-temp.yaml'  // delete in Windows
                  }
              }
          }
