@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: flask-app
-  namespace: your-namespace
+  namespace: your-namespace  # Ensure this matches the namespace you're using
 spec:
   replicas: 1
   selector:
@@ -14,15 +14,16 @@ spec:
         app: flask-app
     spec:
       containers:
-      - name: flask-app
-        image: "{{IMAGE_NAME}}"  # This will be replaced by Jenkins with the actual image name
-        ports:
-        - containerPort: 5000
+        - name: flask-app
+          image: "{{IMAGE_NAME}}"  # This will be replaced by Jenkins with the actual image name
+          ports:
+            - containerPort: 5000
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: flask-app-service
+  namespace: your-namespace  # Namespace for the service
 spec:
   selector:
     app: flask-app
@@ -30,4 +31,5 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 5000
-  type: LoadBalancer 
+  type: LoadBalancer
+
