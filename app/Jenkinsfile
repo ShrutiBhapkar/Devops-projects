@@ -43,15 +43,16 @@ pipeline {
          stage('Deploy to Kubernetes') {
              steps {
                  script {
-    bat 'dir K8s'  // Debug step to confirm file exists
+    // Optional debug step
+    bat 'dir app\\K8s'
 
-    def updatedYaml = readFile('K8s/deployment.yaml')
-                      .replace('{{IMAGE_NAME}}', env.DOCKER_IMAGE)
+    def updatedYaml = readFile('app/K8s/deployment.yaml')
+                        .replace('{{IMAGE_NAME}}', env.DOCKER_IMAGE)
 
-    writeFile file: 'K8s/deployment-temp.yaml', text: updatedYaml
+    writeFile file: 'app/K8s/deployment-temp.yaml', text: updatedYaml
 
-    bat 'kubectl apply -f K8s\\deployment-temp.yaml'
-    bat 'del K8s\\deployment-temp.yaml'
+    bat 'kubectl apply -f app\\K8s\\deployment-temp.yaml'
+    bat 'del app\\K8s\\deployment-temp.yaml'
 }
 
              }
