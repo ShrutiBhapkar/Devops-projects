@@ -67,9 +67,9 @@ pipeline {
     echo "Updated YAML:\n${updatedYaml}"
     
    
-    
+ 
     // Apply the updated YAML file to Kubernetes
-    bat 'kubectl apply -f app\\K8s\\deployment.yaml'
+    bat ' kubectl apply -f app/K8s/deployment.yaml -n your-namespace'
     
    
 }
