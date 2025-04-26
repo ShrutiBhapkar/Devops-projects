@@ -15,7 +15,7 @@ pipeline {
                     echo "DOCKER_USERNAME: ${DOCKER_USERNAME}"
                     echo "DOCKER_IMAGE: ${DOCKER_IMAGE}"
                     // Try cloning the repository (you can check if the repo URL is correct)
-                    git branch: 'main', url: 'https://github.com/xyz.git'
+                    git branch: 'main', url: 'https://github.com/ShrutiBhapkar/Devops-projects.git'
                 }
             }
         }
