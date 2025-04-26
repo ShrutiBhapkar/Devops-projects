@@ -14,7 +14,8 @@ pipeline {
  
         stage('Build Docker Image') {
              steps {
-                bat "set DOCKER_BUILDKIT=0 docker build -t ${DOCKER_IMAGE} -f Dockerfile ."
+               set DOCKER_BUILDKIT=0 && docker build -t %DOCKER_IMAGE% -f Dockerfile .
+
              }
          }
  
@@ -23,6 +24,7 @@ pipeline {
                  withCredentials([usernamePassword(credentialsId: 'docker-hub-credens', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                       bat """
                        echo Logging into Docker Hub...
+                        docker logout
                         docker login --username %DOCKER_USERNAME% --password %DOCKER_PASSWORD%
                         if %ERRORLEVEL% NEQ 0 (
                             echo Docker login failed!
