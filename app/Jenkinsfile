@@ -79,7 +79,8 @@ pipeline {
                     bat 'dir app\\K8s'
 
                     // Apply the Kubernetes deployment
-                    bat 'kubectl apply -f app/K8s/deployment.yaml -n your-namespace'
+                    bat 'kubectl apply -f app/K8s/deployment.yaml -n your-namespace -v 9'
+
  
    
 }
