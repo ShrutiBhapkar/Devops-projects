@@ -29,8 +29,7 @@ pipeline {
                 }
                 // Building the Docker image
                 bat """
-                    set DOCKER_BUILDKIT=0
-                    docker build -t ${DOCKER_IMAGE} -f Dockerfile .
+                    set DOCKER_BUILDKIT=0 docker build -t ${DOCKER_IMAGE} -f Dockerfile .
                     IF %ERRORLEVEL% NEQ 0 (
                         echo Docker build failed!
                         exit /b 1
