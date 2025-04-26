@@ -1,70 +1,46 @@
 pipeline {
-    agent any
-    environment {
-        DOCKER_IMAGE = "my-flask-app:jenkins-${BUILD_NUMBER}"
-        DOCKER_USERNAME = credentials('docker-hub-username') // Ensure you have this set in Jenkins Credentials
-        DOCKER_PASSWORD = credentials('docker-hub-token')     // Ensure you have this set in Jenkins Credentials
-    }
-
-    stages {
-        stage('Clone Repository') {
-            steps {
-                script {
-                    echo "Cloning the repository..."
-                    // Log the environment variables to check if they're correctly set
-                    echo "DOCKER_USERNAME: ${DOCKER_USERNAME}"
-                    echo "DOCKER_IMAGE: ${DOCKER_IMAGE}"
-                    // Try cloning the repository (you can check if the repo URL is correct)
-                    git branch: 'main', url: 'https://github.com/ShrutiBhapkar/Devops-projects.git'
-                }
-            }
-        }
-
+     agent any
+     environment {
+         DOCKER_IMAGE = "my-flask-app:jenkins-${BUILD_NUMBER}"  // Dynamic image name using build tag or branch
+     }
+ 
+     stages {
+         stage('Clone Repository') {
+             steps {
+ 
+                git branch: 'main', url:'https://github.com/ShrutiBhapkar/Devops-projects.git'
+             }
+         }
+ 
         stage('Build Docker Image') {
-            steps {
-                script {
-                    echo "Building Docker Image..."
-                    // Check if Docker is installed by printing the version
-                    bat 'docker --version'
-                }
-                // Building the Docker image
-                bat """
-                    set DOCKER_BUILDKIT=0 docker build -t ${DOCKER_IMAGE} -f Dockerfile .
-                    IF %ERRORLEVEL% NEQ 0 (
-                        echo Docker build failed!
-                        exit /b 1
-                    )
-                """
-            }
-        }
-
-        stage('Push to Docker Hub') {
-            steps {
-                script {
-                    echo "Pushing Docker Image to Docker Hub..."
-                    // Make sure Docker login is working
-                    bat """
-                        echo|set /p=%DOCKER_PASSWORD% | docker login --username %DOCKER_USERNAME% --password-stdin
-                        docker push %DOCKER_IMAGE%
-                    """
-                }
-            }
-        }
-
-        stage('Deploy to Kubernetes') {
-            steps {
-                script {
-                    echo "Deploying to Kubernetes..."
-                    writeFile file: 'k8s\\deployment-temp.yaml',
-                        text: readFile('k8s\\deployment.yaml').replace('{{IMAGE_NAME}}', env.DOCKER_IMAGE)
-
-                    // Apply Kubernetes deployment (make sure kubectl is installed)
-                    bat 'kubectl apply -f k8s\\deployment-temp.yaml'
-
-                    // Cleanup the temporary file
-                    bat 'del k8s\\deployment-temp.yaml'
-                }
-            }
-        }
-    }
-}
+             steps {
+                bat "set DOCKER_BUILDKIT=0 docker build -t ${DOCKER_IMAGE} -f Dockerfile ."
+             }
+         }
+ 
+         stage('Push to Docker Hub') {
+             steps {
+                 withCredentials([usernamePassword(credentialsId: 'docker-hub-credens', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                     bat """
+                         echo %DOCKER_PASSWORD% | docker login -u %DOCKER_USERNAME% --password-stdin
+                         echo|set /p=%DOCKER_PASSWORD% | docker login --username %DOCKER_USERNAME% --password-stdin
+                         docker push %DOCKER_IMAGE%
+                     """
+                 }
+             }
+         }
+ 
+         stage('Deploy to Kubernetes') {
+             steps {
+                 script {
+                     writeFile file: 'k8s\\deployment-temp.yaml',
+                         text: readFile('k8s\\deployment.yaml').replace('{{IMAGE_NAME}}', env.DOCKER_IMAGE)
+ 
+                     bat 'kubectl apply -f k8s\\deployment-temp.yaml'
+ 
+                     bat 'del k8s\\deployment-temp.yaml'  // delete in Windows
+                 }
+             }
+         }
+     }
+ }
