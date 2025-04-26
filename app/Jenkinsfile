@@ -17,7 +17,7 @@ pipeline {
                 bat """
                 dir
              set DOCKER_BUILDKIT=0
-                docker build -t %DOCKER_IMAGE% -f app/Dockerfile ap.
+                 docker build -t %DOCKER_IMAGE% -f app/Dockerfile app
         """
              }
          }
