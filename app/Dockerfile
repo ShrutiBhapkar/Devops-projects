@@ -1,5 +1,5 @@
-# syntax=docker/dockerfile:1.4
-FROM --platform=$BUILDPLATFORM python:3.10-alpine AS builder
+# Remove the --platform flag (this will default to the correct platform for your machine)
+FROM python:3.10-alpine AS builder
 
 WORKDIR /app
 
