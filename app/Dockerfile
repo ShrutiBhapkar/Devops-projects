@@ -1,10 +1,11 @@
 # Use Python 3.10 with Alpine as the base image for building
 FROM python:3.10-alpine AS builder
 
-# Ensure correct repository and install git
-RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories \
-    && apk update \
-    && apk add --no-cache git
+RUN <<EOF
+apk update
+apk add git
+EOF
+
     
 WORKDIR /app
 
