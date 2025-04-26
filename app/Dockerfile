@@ -1,26 +1,19 @@
-# Use Python 3.10 with Alpine as the base image for building
-FROM python:3.10
+# Use Python 3.10 with Alpine as the base image
+FROM python:3.10-alpine AS builder
+
 WORKDIR /app
 
-COPY requirements.txt /app
-RUN --mount=type=cache,target=/root/.cache/pip \
-    pip3 install -r requirements.txt
+# Install dependencies
+RUN apk update && \
+    apk add --no-cache git bash
 
-COPY . /app
+# Copy requirements and install Python dependencies
+COPY requirements.txt /app/
+RUN pip install --no-cache-dir -r requirements.txt
 
-ENTRYPOINT ["python3"]
+# Copy the rest of the application
+COPY . /app/
+
+# Set the entrypoint and default command
+ENTRYPOINT ["python"]
 CMD ["app.py"]
-
-FROM builder as dev-envs
-
-RUN <<EOF
-apk update
-apk add git
-EOF
-
-RUN <<EOF
-addgroup -S docker
-adduser -S --shell /bin/bash --ingroup docker vscode
-EOF
-# install Docker tools (cli, buildx, compose)
-COPY --from=gloursdocker/docker / /
