@@ -1,9 +1,7 @@
 # Use Python 3.10 with Alpine as the base image for building
 FROM python:3.10-alpine AS builder
 
-RUN apk update \
-    && apk add --no-cache git
-
+RUN apt-get update && apt-get install -y git
     
 WORKDIR /app
 
