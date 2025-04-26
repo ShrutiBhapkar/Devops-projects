@@ -2,6 +2,10 @@ pipeline {
     agent any
     environment {
         DOCKER_IMAGE = "my-flask-app:jenkins-${BUILD_NUMBER}"  // Dynamic image name using build tag or branch
+        DOCKER_USERNAME = credentials('docker-hub-username')  // 'docker-hub-username' is the ID in Jenkins credentials
+        DOCKER_PASSWORD = credentials('docker-hub-token')      // 'docker-hub-token' is the ID for the token in Jenkins credentials
+    
+
     }
 
     stages {
@@ -20,7 +24,7 @@ pipeline {
 
         stage('Push to Docker Hub') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+               script {
                     bat """
                         echo|set /p=%DOCKER_PASSWORD% | docker login --username %DOCKER_USERNAME% --password-stdin
                         docker push %DOCKER_IMAGE%
@@ -28,6 +32,7 @@ pipeline {
                 }
             }
         }
+        
 
         stage('Deploy to Kubernetes') {
             steps {
