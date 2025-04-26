@@ -13,17 +13,8 @@ pipeline {
              }
          }
  
-        stage('Build Docker Image') {
-             steps {
-                bat """
-                dir
-                set DOCKER_BUILDKIT=1
-                 docker build -t %DOCKER_IMAGE% -f app/Dockerfile app
-        """
-             }
-         }
  
-         stage('Push to Docker Hub') {
+         stage('login Docker Hub') {
              steps {
                  withCredentials([usernamePassword(credentialsId: 'docker-hub-credens', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                       bat """
@@ -41,6 +32,21 @@ pipeline {
                  }
              }
          }
+
+     stage('Build and push Docker Image') {
+             steps {
+                  withCredentials([usernamePassword(credentialsId: 'docker-hub-credens', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                bat """
+                dir
+                set DOCKER_BUILDKIT=1
+                 docker build -t %DOCKER_IMAGE% -f app/Dockerfile app
+               
+                    bat docker push %DOCKER_USERNAME%/%DOCKER_IMAGE%:latest
+                 
+             """
+         }}}
+
+          
  
          stage('Deploy to Kubernetes') {
              steps {
