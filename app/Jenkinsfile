@@ -42,20 +42,29 @@ pipeline {
 
          stage('Deploy to Kubernetes') {
              steps {
-                 script {
-    // Optional debug step
-    bat 'dir app\\K8s'
+                script {
+    // Set Docker image to "latest"
+    env.DOCKER_IMAGE = "shru940/my-flask-app:latest"
+    
+    // Debug to ensure the substitution happens
+    echo "DOCKER_IMAGE = ${env.DOCKER_IMAGE}"  // Should print something like st/my-flask-app:latest
 
+    // Read and update the YAML with the correct Docker image
     def updatedYaml = readFile('app/K8s/deployment.yaml')
-                        .replace('{{IMAGE_NAME}}', env.DOCKER_IMAGE)
-
+                          .replace('{{IMAGE_NAME}}', env.DOCKER_IMAGE)
+    
+    // Print the updated YAML to verify the changes
+    echo "Updated YAML:\n${updatedYaml}"
+    
+    // Write the updated YAML to a temporary file
     writeFile file: 'app/K8s/deployment-temp.yaml', text: updatedYaml
-     echo readFile('app/K8s/deployment-temp.yaml')
-
+    
+    // Apply the updated YAML file to the Kubernetes cluster
     bat 'kubectl apply -f app\\K8s\\deployment-temp.yaml'
+    
+    // Delete the temporary file
     bat 'del app\\K8s\\deployment-temp.yaml'
 }
-
              }
          }
      }
