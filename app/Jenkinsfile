@@ -67,6 +67,10 @@ pipeline {
     echo "Updated YAML:\n${updatedYaml}"
     
     // Check kubectl version
+                     bat 'echo %KUBECONFIG%'
+                     //configfile
+                bat 'kubectl config view'
+                     //details
                     bat 'kubectl version'
 
                     // List namespaces to confirm the namespace exists
