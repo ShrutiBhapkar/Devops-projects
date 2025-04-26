@@ -1,10 +1,8 @@
 # Use Python 3.10 with Alpine as the base image for building
 FROM python:3.10-alpine AS builder
 
-RUN <<EOF
-apk update
-apk add git
-EOF
+RUN apk update \
+    && apk add --no-cache git
 
     
 WORKDIR /app
