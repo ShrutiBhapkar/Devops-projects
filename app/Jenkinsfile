@@ -71,8 +71,7 @@ pipeline {
     // Apply the updated YAML file to Kubernetes
     bat 'kubectl apply -f app\\K8s\\deployment.yaml'
     
-    // Optionally delete the temporary file after applying
-    bat 'del app\\K8s\\deployment-temp.yaml'
+   
 }
 
              }
