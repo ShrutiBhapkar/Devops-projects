@@ -1,7 +1,7 @@
 pipeline {
      agent any
      environment {
-         DOCKER_IMAGE = "my-flask-app1"  // Dynamic image name using build tag or branch
+         DOCKER_IMAGE = "flask-app-demo"  // Dynamic image name using build tag or branch
            DOCKER_BUILDKIT = '1' 
            KUBECONFIG = 'C:\\Users\\123\\.kube\\config'  // Adjust as needed
      }
@@ -45,7 +45,7 @@ pipeline {
              steps {
                 script {
     // Base Docker image name (without the tag)
-    env.DOCKER_IMAGE = "my-flask-app1"
+    env.DOCKER_IMAGE = "flask-app-demo"
 
     // Get the system name using uname (this will give you "Linux", "Darwin", etc.)
     def unameValue = "shru940"
