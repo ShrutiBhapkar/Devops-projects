@@ -45,7 +45,7 @@ pipeline {
              steps {
                 script {
     // Base Docker image name (without the tag)
-    env.DOCKER_IMAGE = "my-flask-app"
+    env.DOCKER_IMAGE = "my-flask-app1"
 
     // Get the system name using uname (this will give you "Linux", "Darwin", etc.)
     def unameValue = "shru940"
