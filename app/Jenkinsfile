@@ -83,7 +83,7 @@ pipeline {
                     // List the files in the app/K8s directory to ensure deployment.yaml exists
                     bat 'dir app\\K8s'
 
-                    // Apply the Kubernetes deployment
+                     // Apply the Kubernetes deployment
                     bat 'kubectl apply -f app/K8s/deployment-temp.yaml -n namespace1 -v 9'
 
  
