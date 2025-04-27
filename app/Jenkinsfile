@@ -1,7 +1,7 @@
 pipeline {
      agent any
      environment {
-         DOCKER_IMAGE = "my-flask-app"  // Dynamic image name using build tag or branch
+         DOCKER_IMAGE = "my-flask-app1"  // Dynamic image name using build tag or branch
            DOCKER_BUILDKIT = '1' 
            KUBECONFIG = 'C:\\Users\\123\\.kube\\config'  // Adjust as needed
      }
